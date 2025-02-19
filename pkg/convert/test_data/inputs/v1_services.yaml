@@ -1,0 +1,30 @@
+---
+- apiVersion: openslo/v1
+  kind: Service
+  metadata:
+    labels:
+      env:
+      - prod
+      team:
+      - team-a
+      - team-b
+    name: example-service
+    displayName: Example Service
+  spec:
+    description: Example service description
+---
+- apiVersion: openslo/v1
+  kind: Service
+  metadata:
+    labels:
+      env:
+      - prod
+      team:
+      - team-a
+      - team-b
+    annotations:
+      nobl9.com/metadata.project: non-default
+      my.domain/custom: foo
+    name: example-service
+  spec:
+    description: Example service description

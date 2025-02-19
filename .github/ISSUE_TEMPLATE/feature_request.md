@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an idea to help us improve the your-module-name.
+about: Suggest an idea to help us improve the nobl9-openslo.
 title: "[FEAT]"
 labels: enhancement
 assignees: ''

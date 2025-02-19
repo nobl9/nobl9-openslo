@@ -3,7 +3,7 @@ MAKEFLAGS += --silent --no-print-directory
 
 BIN_DIR := ./bin
 SCRIPTS_DIR := ./scripts
-APP_NAME := your-module-name
+APP_NAME := nobl9-openslo
 LDFLAGS += -s -w
 
 # renovate datasource=github-releases depName=securego/gosec
@@ -36,7 +36,7 @@ define _print_check_step
 endef
 
 .PHONY: build
-## Build your-module-name binary.
+## Build nobl9-openslo binary.
 build:
 	go build -ldflags="$(LDFLAGS)" -o $(BIN_DIR)/$(APP_NAME) ./cmd
 
@@ -118,7 +118,7 @@ format/go:
 	echo "Formatting Go files..."
 	$(call _ensure_installed,binary,goimports)
 	gofmt -l -w -s .
-	$(BIN_DIR)/goimports -local=github.com/nobl9/your-module-name -w .
+	$(BIN_DIR)/goimports -local=github.com/nobl9/nobl9-openslo -w .
 
 ## Format cspell config file.
 format/cspell:

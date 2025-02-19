@@ -1,0 +1,29 @@
+- apiVersion: n9/v1alpha
+  kind: Service
+  metadata:
+    labels:
+      env:
+      - prod
+      team:
+      - team-a
+      - team-b
+    project: default
+    name: example-service
+    displayName: Example Service
+  spec:
+    description: Example service description
+- apiVersion: n9/v1alpha
+  kind: Service
+  metadata:
+    labels:
+      env:
+      - prod
+      team:
+      - team-a
+      - team-b
+    annotations:
+      my.domain/custom: foo
+    project: non-default
+    name: example-service
+  spec:
+    description: Example service description

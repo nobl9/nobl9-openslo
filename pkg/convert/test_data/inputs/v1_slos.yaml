@@ -1,0 +1,47 @@
+- apiVersion: openslo/v1
+  kind: SLO
+  metadata:
+    name: web-availability
+    displayName: SLO for web availability
+    labels:
+      env:
+        - prod
+      team:
+        - team-a
+        - team-b
+    annotations:
+      my.domain/custom: foo
+      nobl9.com/metadata.project: my-project
+      nobl9.com/spec.indicator.metricSource.project: my-agent-project
+  spec:
+    description: X% of search requests are successful
+    service: web
+    budgetingMethod: Timeslices
+    indicator:
+      metadata:
+        name: web-successful-requests-ratio
+      spec:
+        ratioMetric:
+          counter: true
+          good:
+            metricSource:
+              type: Prometheus
+              spec:
+                query: sum(http_requests{k8s_cluster="prod",component="web",code=~"2xx|4xx"})
+          total:
+            metricSource:
+              type: Prometheus
+              spec:
+                query: sum(http_requests{k8s_cluster="prod",component="web"})
+    objectives:
+      - displayName: Good
+        op: gt
+        target: 0.995
+        timeSliceTarget: 0.95
+        timeSliceWindow: 1m
+    timeWindow:
+      - duration: 1w
+        isRolling: false
+        calendar:
+          startTime: 2022-01-01 12:00:00
+          timeZone: America/New_York
