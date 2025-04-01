@@ -14,9 +14,9 @@
       nobl9.com/metadata.project: my-project
       nobl9.com/spec.indicator.metricSource.project: my-agent-project
   spec:
-    description: X% of search requests are successful
+    description: Example Prometheus SLO
     service: web
-    budgetingMethod: Timeslices
+    budgetingMethod: Occurrences
     indicator:
       metadata:
         name: web-successful-requests-ratio
@@ -25,20 +25,19 @@
           counter: true
           good:
             metricSource:
-              type: Prometheus
+              metricSourceRef: my-agent
+              type: prometheus
               spec:
-                query: sum(http_requests{k8s_cluster="prod",component="web",code=~"2xx|4xx"})
+                promql: sum(http_request_duration_seconds_bucket{handler="/api/v1/slos",le="2.5"})
           total:
             metricSource:
-              type: Prometheus
+              metricSourceRef: my-agent
+              type: prometheus
               spec:
-                query: sum(http_requests{k8s_cluster="prod",component="web"})
+                promql: sum(http_request_duration_seconds_count{handler="/api/v1/slos"})
     objectives:
       - displayName: Good
-        op: gt
-        target: 0.995
-        timeSliceTarget: 0.95
-        timeSliceWindow: 1m
+        target: 0.95
     timeWindow:
       - duration: 1w
         isRolling: false

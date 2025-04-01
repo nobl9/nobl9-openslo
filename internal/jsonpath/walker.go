@@ -22,9 +22,10 @@ func (w *Walker) Walk(r gjson.Result, path string) {
 		pathElement = key.String()
 
 		var currentPath string
-		if path != "" {
+		switch {
+		case path != "":
 			currentPath = path + "." + pathElement
-		} else {
+		default:
 			currentPath = pathElement
 		}
 		w.paths[currentPath] = value.Value()

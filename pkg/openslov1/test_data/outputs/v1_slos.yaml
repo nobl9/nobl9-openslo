@@ -11,6 +11,7 @@
         - team-a
         - team-b
     annotations:
+      openslo.com/apiVersion: openslo/v1
       my.domain/custom: foo
   spec:
     description: Example Prometheus SLO
@@ -18,15 +19,11 @@
     budgetingMethod: Occurrences
     indicator:
       metricSource:
-        name: prometheus
-        project: default
-        kind: Agent
+        name: my-agent
+        project: my-agent-project
     objectives:
       - displayName: Good
-        value: 1.0
-        name: ok
         target: 0.95
-        timeSliceTarget: 0.9
         countMetrics:
           incremental: true
           good:
@@ -42,5 +39,3 @@
         calendar:
           startTime: 2022-01-01 12:00:00
           timeZone: America/New_York
-    alertPolicies:
-      - fast-burn-5x-for-last-10m

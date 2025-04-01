@@ -1,4 +1,4 @@
-package convert
+package openslov1
 
 import (
 	"bytes"
@@ -19,7 +19,7 @@ const (
 	outputsDir = "./test_data/outputs/"
 )
 
-func TestOpenSLOToNobl9(t *testing.T) {
+func TestToNobl9(t *testing.T) {
 	inputs := listAllFilesInDir(t, inputsDir)
 	outputs := listAllFilesInDir(t, outputsDir)
 	require.Len(t, inputs, len(outputs))
@@ -32,7 +32,7 @@ func TestOpenSLOToNobl9(t *testing.T) {
 			outputsFileData, err := os.ReadFile(filepath.Join(outputsDir, fileName))
 			require.NoError(t, err)
 
-			actual, err := OpenSLOToNobl9(inputFileData, openslosdk.FormatYAML)
+			actual, err := ToNobl9(inputFileData, openslosdk.FormatYAML)
 
 			require.NoError(t, err)
 
@@ -44,7 +44,7 @@ func TestOpenSLOToNobl9(t *testing.T) {
 			require.NoError(t, err)
 			err = openslosdk.Validate(opensloObjects...)
 			require.NoError(t, err, "failed to validate OpenSLO objects")
-	
+
 			nobl9Objects, err := sdk.DecodeObjects(actual)
 			require.NoError(t, err)
 			errs := manifest.Validate(nobl9Objects)
