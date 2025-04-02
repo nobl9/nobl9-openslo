@@ -12,6 +12,7 @@
         - team-b
     annotations:
       openslo.com/apiVersion: openslo/v1
+      openslo.com/spec.indicator.metadata.name: web-successful-requests-ratio
       my.domain/custom: foo
   spec:
     description: Example Prometheus SLO

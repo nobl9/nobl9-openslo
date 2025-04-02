@@ -71,9 +71,6 @@ func opensloObjectToNobl9(object gjson.Result) (nobl9Object string, err error) {
 
 	nobl9Object = "{}"
 	for _, path := range paths {
-		if !rules.HasRuleFor(path.Path) {
-			continue
-		}
 		nobl9Object, err = rules.Convert(nobl9Object, path.Path, path.Value)
 		if err != nil {
 			return "", err

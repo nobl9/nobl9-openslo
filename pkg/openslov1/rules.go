@@ -49,8 +49,8 @@ var commonRules = conversionrules.Rules{
 var sloV1Rules = conversionrules.Rules{
 	"spec.service":                                       conversionrules.Direct(),
 	"spec.budgetingMethod":                               conversionrules.Direct(),
-	"spec.indicator.metadata.name":                       conversionrules.Path("spec.objectives.#.name"),
-	"spec.indicator.metadata.displayName":                conversionrules.Path("spec.objectives.#.displayName"),
+	"spec.indicator.metadata.name":                       conversionrules.Annotation(),
+	"spec.indicator.metadata.displayName":                conversionrules.Annotation(),
 	"spec.indicator.spec.ratioMetric.counter":            conversionrules.Path("spec.objectives.#.countMetrics.incremental"),
 	"spec.indicator.spec.ratioMetric.total.metricSource": conversionrules.Custom(convertSLOMetricSource(sliMetricTypeTotal)),
 	"spec.indicator.spec.ratioMetric.good.metricSource":  conversionrules.Custom(convertSLOMetricSource(sliMetricTypeGood)),

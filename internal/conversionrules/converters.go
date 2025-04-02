@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/nobl9/nobl9-openslo/internal/annotations"
 	"github.com/nobl9/nobl9-openslo/internal/jsonpath"
 )
 
@@ -95,4 +96,14 @@ type customConverter struct {
 
 func (c customConverter) Convert(jsonObject, path string, v any) (updatedJSON string, err error) {
 	return c.f(jsonObject, path, v)
+}
+
+func Annotation() Converter {
+	return annotationConverter{}
+}
+
+type annotationConverter struct{}
+
+func (c annotationConverter) Convert(jsonObject, path string, v any) (updatedJSON string, err error) {
+	return annotations.AddOpenSLOToNobl9(jsonObject, path, v)
 }
