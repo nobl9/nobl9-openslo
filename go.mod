@@ -2,21 +2,15 @@ module github.com/nobl9/nobl9-openslo
 
 go 1.24
 
-toolchain go1.24.1
-
 require (
-	github.com/OpenSLO/go-sdk v0.2.1
-	github.com/goccy/go-yaml v1.17.0
+	github.com/OpenSLO/go-sdk v0.3.0
+	github.com/goccy/go-yaml v1.17.1
 	github.com/nobl9/nobl9-go v0.98.0
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.10.0
 	github.com/tidwall/gjson v1.18.0
 	github.com/tidwall/sjson v1.2.5
 )
-
-replace github.com/nobl9/nobl9-go v0.97.0-rc2 => /home/mh/nobl9/nobl9-go
-
-replace github.com/OpenSLO/go-sdk v0.2.1 => /home/mh/nobl9/go-sdk
 
 require (
 	github.com/BurntSushi/toml v1.5.0 // indirect

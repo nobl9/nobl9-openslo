@@ -1,4 +1,4 @@
-package openslov1
+package openslotonobl9
 
 import (
 	"bytes"
@@ -8,6 +8,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/OpenSLO/go-sdk/pkg/openslo"
 	"github.com/OpenSLO/go-sdk/pkg/openslosdk"
 	"github.com/pkg/errors"
 	"github.com/tidwall/gjson"
@@ -16,7 +17,7 @@ import (
 	"github.com/nobl9/nobl9-openslo/internal/jsonpath"
 )
 
-func ToNobl9(opensloData []byte, format openslosdk.ObjectFormat) ([]byte, error) {
+func Convert(opensloData []byte, format openslosdk.ObjectFormat) ([]byte, error) {
 	opensloObjects, err := openslosdk.Decode(bytes.NewReader(opensloData), format)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to decode OpenSLO objects in %s format", format)
@@ -43,7 +44,7 @@ func ToNobl9(opensloData []byte, format openslosdk.ObjectFormat) ([]byte, error)
 	for _, object := range objects {
 		nobl9Object, err := opensloObjectToNobl9(object)
 		if err != nil {
-			return nil, err
+			return nil, errors.Wrapf(err, "failed to convert object from OpenSLO to Nobl9 format")
 		}
 		nobl9Objects = append(nobl9Objects, nobl9Object)
 	}
@@ -60,11 +61,15 @@ func opensloObjectToNobl9(object gjson.Result) (nobl9Object string, err error) {
 	walker.Walk(object, "")
 	paths := sortPaths(walker.Paths())
 
-	opensloVersion := object.Get("apiVersion").String()
-	rules, err := getConversionRules(
-		opensloVersion,
-		object.Get("kind").String(),
-	)
+	opensloVersion, err := openslo.ParseVersion(object.Get("apiVersion").String())
+	if err != nil {
+		return "", err
+	}
+	opensloKind, err := openslo.ParseKind(object.Get("kind").String())
+	if err != nil {
+		return "", err
+	}
+	rules, err := getConversionRules(opensloVersion, opensloKind)
 	if err != nil {
 		return "", err
 	}

@@ -1,4 +1,4 @@
-package openslov1
+package openslotonobl9
 
 import (
 	"bytes"
@@ -32,8 +32,7 @@ func TestToNobl9(t *testing.T) {
 			outputsFileData, err := os.ReadFile(filepath.Join(outputsDir, fileName))
 			require.NoError(t, err)
 
-			actual, err := ToNobl9(inputFileData, openslosdk.FormatYAML)
-
+			actual, err := Convert(inputFileData, openslosdk.FormatYAML)
 			require.NoError(t, err)
 
 			expectedJSON, err := yaml.YAMLToJSON(outputsFileData)

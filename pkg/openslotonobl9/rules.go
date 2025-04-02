@@ -1,4 +1,4 @@
-package openslov1
+package openslotonobl9
 
 import (
 	"encoding/json"
@@ -9,6 +9,8 @@ import (
 	"github.com/OpenSLO/go-sdk/pkg/openslo"
 	v1 "github.com/OpenSLO/go-sdk/pkg/openslo/v1"
 	"github.com/nobl9/nobl9-go/manifest"
+	"github.com/nobl9/nobl9-go/manifest/v1alpha/agent"
+	"github.com/nobl9/nobl9-go/manifest/v1alpha/direct"
 	"github.com/nobl9/nobl9-go/manifest/v1alpha/slo"
 	"github.com/nobl9/nobl9-go/manifest/v1alpha/twindow"
 	"github.com/pkg/errors"
@@ -18,14 +20,16 @@ import (
 	"github.com/nobl9/nobl9-openslo/internal/jsonpath"
 )
 
-func getConversionRules(version, kind string) (conversionrules.Rules, error) {
+func getConversionRules(version openslo.Version, kind openslo.Kind) (conversionrules.Rules, error) {
 	switch version {
-	case openslo.VersionV1.String():
+	case openslo.VersionV1:
 		switch kind {
-		case openslo.KindSLO.String():
-			return mergeConversionRules(commonRules, sloV1Rules), nil
-		case openslo.KindService.String():
-			return commonRules, nil
+		case openslo.KindSLO:
+			return mergeConversionRules(v1CommonRules, v1SLORules), nil
+		case openslo.KindService:
+			return v1CommonRules, nil
+		case openslo.KindDataSource:
+			return mergeConversionRules(v1CommonRules, v1DataSourceRules), nil
 		default:
 			return nil, errors.Errorf("unsupported kind %s for version %s", kind, version)
 		}
@@ -34,10 +38,10 @@ func getConversionRules(version, kind string) (conversionrules.Rules, error) {
 	}
 }
 
-var commonRules = conversionrules.Rules{
-	"apiVersion": conversionrules.Value(
-		func(v any) (any, error) { return manifest.VersionV1alpha.String(), nil },
-	),
+var v1CommonRules = conversionrules.Rules{
+	"apiVersion": conversionrules.Value(func(v any) (any, error) {
+		return manifest.VersionV1alpha.String(), nil
+	}),
 	"kind":                 conversionrules.Direct(),
 	"metadata.name":        conversionrules.Direct(),
 	"metadata.displayName": conversionrules.Direct(),
@@ -46,7 +50,7 @@ var commonRules = conversionrules.Rules{
 	"spec.description":     conversionrules.Direct(),
 }
 
-var sloV1Rules = conversionrules.Rules{
+var v1SLORules = conversionrules.Rules{
 	"spec.service":                                       conversionrules.Direct(),
 	"spec.budgetingMethod":                               conversionrules.Direct(),
 	"spec.indicator.metadata.name":                       conversionrules.Annotation(),
@@ -64,6 +68,14 @@ var sloV1Rules = conversionrules.Rules{
 	"spec.timeWindow.0.duration":                         conversionrules.Custom(convertSLOTimeWindowDuration),
 	"spec.timeWindow.0.isRolling":                        conversionrules.Path("spec.timeWindows.0.isRolling"),
 	"spec.timeWindow.0.calendar":                         conversionrules.Path("spec.timeWindows.0.calendar"),
+}
+
+var v1DataSourceRules = conversionrules.Rules{
+	"kind": conversionrules.Value(func(any) (any, error) {
+		return manifest.KindAgent.String(), nil
+	}),
+	"spec":             conversionrules.Custom(convertDataSourceSpec),
+	"spec.description": conversionrules.Direct(),
 }
 
 const nobl9AnnotationPrefix = "nobl9.com/"
@@ -142,7 +154,7 @@ func convertSLOMetricSource(typ sliMetricType) conversionrules.ConversionFunc {
 	return func(jsonObject, path string, v any) (updatedJSON string, err error) {
 		metricSource, err := anyToType[v1.SLIMetricSource](v)
 		if err != nil {
-			return "", errors.Wrapf(err, "failed to convert %T to %T", v, metricSource)
+			return "", err
 		}
 		if err = validateMetricSpecName(metricSource.Type); err != nil {
 			return "", err
@@ -191,6 +203,45 @@ func validateMetricSpecName(name string) error {
 	return errors.Errorf("unsupported metric spec name %s, try one of: %s", name, strings.Join(names, ", "))
 }
 
+func convertDataSourceSpec(jsonObject, path string, v any) (updatedJSON string, err error) {
+	spec, err := anyToType[v1.DataSourceSpec](v)
+	if err != nil {
+		return "", err
+	}
+	if err = validateDataSourceTypeName(manifest.KindAgent, spec.Type); err != nil {
+		return "", err
+	}
+	return sjson.SetRaw(jsonObject, "spec."+spec.Type, string(spec.ConnectionDetails))
+}
+
+func validateDataSourceTypeName(kind manifest.Kind, name string) error {
+	var rt reflect.Type
+	switch kind {
+	case manifest.KindDirect:
+		rt = reflect.TypeOf(direct.Spec{})
+	default:
+		rt = reflect.TypeOf(agent.Spec{})
+	}
+	names := make([]string, 0, rt.NumField())
+	for i := range rt.NumField() {
+		field := rt.Field(i)
+		if !strings.HasSuffix(field.Type.String(), "Config") {
+			continue
+		}
+		tag := field.Tag.Get("json")
+		split := strings.Split(tag, ",")
+		if len(split) == 0 {
+			continue
+		}
+		fieldName := split[0]
+		if fieldName == name {
+			return nil
+		}
+		names = append(names, fieldName)
+	}
+	return errors.Errorf("unsupported metric spec name %s, try one of: %s", name, strings.Join(names, ", "))
+}
+
 func mergeConversionRules(rules ...conversionrules.Rules) conversionrules.Rules {
 	merged := make(conversionrules.Rules)
 	for _, r := range rules {
@@ -204,10 +255,10 @@ func mergeConversionRules(rules ...conversionrules.Rules) conversionrules.Rules 
 func anyToType[T any](v any) (result T, err error) {
 	rawJSON, err := json.Marshal(v)
 	if err != nil {
-		return result, err
+		return result, errors.Wrapf(err, "failed to convert %T to %T", v, result)
 	}
 	if err = json.Unmarshal(rawJSON, &result); err != nil {
-		return result, err
+		return result, errors.Wrapf(err, "failed to convert %T to %T", v, result)
 	}
 	return result, nil
 }

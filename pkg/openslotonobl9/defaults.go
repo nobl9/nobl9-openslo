@@ -1,4 +1,4 @@
-package openslov1
+package openslotonobl9
 
 import (
 	"github.com/pkg/errors"

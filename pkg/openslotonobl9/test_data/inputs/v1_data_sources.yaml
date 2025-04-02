@@ -1,0 +1,27 @@
+- apiVersion: openslo/v1
+  kind: DataSource
+  metadata:
+    name: elasticsearch
+    displayName: My Elasticsearch
+  spec:
+    description: My Data Source
+    type: elasticsearch
+    connectionDetails:
+      url: https://example.com
+- apiVersion: openslo/v1
+  kind: DataSource
+  metadata:
+    name: app-dynamics
+    displayName: App Dynamics
+    annotations:
+      nobl9.com/metadata.project: non-default
+      nobl9.com/kind: Direct
+  spec:
+    description: My Data Source
+    type: appDynamics
+    connectionDetails:
+      accountName: nobl9
+      clientID: dev-agent@nobl9
+      clientName: dev-agent
+      clientSecret: secret
+      url: https://example.com
