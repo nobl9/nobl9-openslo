@@ -10,6 +10,7 @@ import (
 	v1 "github.com/OpenSLO/go-sdk/pkg/openslo/v1"
 	"github.com/nobl9/nobl9-go/manifest"
 	"github.com/nobl9/nobl9-go/manifest/v1alpha/agent"
+	"github.com/nobl9/nobl9-go/manifest/v1alpha/alertmethod"
 	"github.com/nobl9/nobl9-go/manifest/v1alpha/alertpolicy"
 	"github.com/nobl9/nobl9-go/manifest/v1alpha/direct"
 	"github.com/nobl9/nobl9-go/manifest/v1alpha/slo"
@@ -33,6 +34,8 @@ func getConversionRules(version openslo.Version, kind openslo.Kind) (conversionr
 			return mergeConversionRules(v1CommonRules, v1DataSourceRules), nil
 		case openslo.KindAlertPolicy:
 			return mergeConversionRules(v1CommonRules, v1AlertPolicyRules), nil
+		case openslo.KindAlertNotificationTarget:
+			return mergeConversionRules(v1CommonRules, v1AlertNotificationTargetRules), nil
 		case openslo.KindSLI:
 			return nil, nil
 		case openslo.KindAlertCondition:
@@ -81,14 +84,12 @@ var v1DataSourceRules = conversionrules.Rules{
 	"kind": conversionrules.Value(func(any) (any, error) {
 		return manifest.KindAgent.String(), nil
 	}),
-	"spec":             conversionrules.Custom(convertDataSourceSpec),
-	"spec.description": conversionrules.Direct(),
+	"spec": conversionrules.Custom(convertDataSourceSpec),
 }
 
 // TODO:
 // - Ensure only one severity is set per whole alert policy.
 var v1AlertPolicyRules = conversionrules.Rules{
-	"spec.description":                                conversionrules.Direct(),
 	"spec.conditions.#.spec.severity":                 conversionrules.Path("spec.severity"),
 	"spec.conditions.#.spec.condition.op":             conversionrules.PathIndex("spec.conditions.%d.op"),
 	"spec.conditions.#.spec.condition.kind":           conversionrules.Custom(convertConditionKind),
@@ -96,6 +97,13 @@ var v1AlertPolicyRules = conversionrules.Rules{
 	"spec.conditions.#.spec.condition.lookbackWindow": conversionrules.PathIndex("spec.conditions.%d.alertingWindow"),
 	"spec.conditions.#.spec.condition.alertAfter":     conversionrules.PathIndex("spec.conditions.%d.lastsFor"),
 	"spec.notificationTargets.#.targetRef":            conversionrules.PathIndex("spec.alertMethods.%d.metadata.name"),
+}
+
+var v1AlertNotificationTargetRules = conversionrules.Rules{
+	"kind": conversionrules.Value(func(any) (any, error) {
+		return manifest.KindAlertMethod.String(), nil
+	}),
+	"spec.target": conversionrules.Custom(convertNotificationTarget),
 }
 
 const nobl9AnnotationPrefix = "nobl9.com/"
@@ -246,6 +254,18 @@ func convertConditionKind(jsonObject, path string, v any) (updatedJSON string, e
 	return sjson.Set(jsonObject, newPath, alertpolicy.MeasurementAverageBurnRate.String())
 }
 
+func convertNotificationTarget(jsonObject, path string, v any) (updatedJSON string, err error) {
+	target, ok := v.(string)
+	if !ok {
+		return "", errors.Errorf("invalid type for %s, expected string, got %T", path, v)
+	}
+	alertMethod, err := getAlertMethodTypeForName(target)
+	if err != nil {
+		return "", err
+	}
+	return sjson.Set(jsonObject, "spec."+target, alertMethod)
+}
+
 func validateDataSourceTypeName(kind manifest.Kind, name string) error {
 	var rt reflect.Type
 	switch kind {
@@ -271,7 +291,33 @@ func validateDataSourceTypeName(kind manifest.Kind, name string) error {
 		}
 		names = append(names, fieldName)
 	}
-	return errors.Errorf("unsupported metric spec name %s, try one of: %s", name, strings.Join(names, ", "))
+	return errors.Errorf("unsupported data source type name %s, try one of: %s", name, strings.Join(names, ", "))
+}
+
+func getAlertMethodTypeForName(name string) (any, error) {
+	rt := reflect.TypeOf(alertmethod.Spec{})
+	names := make([]string, 0, rt.NumField())
+	for i := range rt.NumField() {
+		field := rt.Field(i)
+		if !strings.HasSuffix(field.Type.String(), "Method") {
+			continue
+		}
+		tag := field.Tag.Get("json")
+		split := strings.Split(tag, ",")
+		if len(split) == 0 {
+			continue
+		}
+		fieldName := split[0]
+		if fieldName == name {
+			typ := field.Type
+			if typ.Kind() == reflect.Ptr {
+				typ = typ.Elem()
+			}
+			return reflect.Zero(typ).Interface(), nil
+		}
+		names = append(names, fieldName)
+	}
+	return nil, errors.Errorf("unsupported alert method type name %s, try one of: %s", name, strings.Join(names, ", "))
 }
 
 func mergeConversionRules(rules ...conversionrules.Rules) conversionrules.Rules {

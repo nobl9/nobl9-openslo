@@ -106,6 +106,7 @@ type pathTuple struct {
 func sortPaths(pathsMap map[string]any) []pathTuple {
 	// The first item from this list will be the last in the result.
 	reversePrecedence := map[string]func(s1, s2 string) bool{
+		"metadata.annotations":                strings.HasPrefix,
 		"spec.indicator.spec.ratioMetric":     strings.HasPrefix,
 		"spec.indicator.spec.thresholdMetric": strings.HasPrefix,
 	}
