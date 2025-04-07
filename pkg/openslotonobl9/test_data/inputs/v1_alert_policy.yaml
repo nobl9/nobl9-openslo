@@ -1,0 +1,29 @@
+- apiVersion: openslo/v1
+  kind: AlertPolicy
+  metadata:
+    name: low-priority
+    displayName: Low Priority
+    labels:
+      env:
+        - prod
+      team:
+        - team-a
+        - team-b
+  spec:
+    description: Alert policy for low priority notifications, notifies on-call via email
+    alertWhenBreaching: true
+    conditions:
+      - kind: AlertCondition
+        metadata:
+          name: memory-usage-breach
+          displayName: Memory Usage breaching
+        spec:
+          description: SLO burn rate for memory-usage-breach exceeds 2
+          severity: High
+          condition:
+            kind: burnrate
+            op: gte
+            threshold: 2.0
+            lookbackWindow: 1h
+    notificationTargets:
+      - targetRef: on-call-mail-notification

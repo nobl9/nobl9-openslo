@@ -31,6 +31,10 @@ func TestToNobl9(t *testing.T) {
 
 			outputsFileData, err := os.ReadFile(filepath.Join(outputsDir, fileName))
 			require.NoError(t, err)
+			expectedObjects, err := sdk.DecodeObjects(outputsFileData)
+			require.NoError(t, err)
+			errs := manifest.Validate(expectedObjects)
+			require.Empty(t, errs, "failed to validate Nobl9 objects")
 
 			actual, err := Convert(inputFileData, openslosdk.FormatYAML)
 			require.NoError(t, err)
@@ -46,7 +50,7 @@ func TestToNobl9(t *testing.T) {
 
 			nobl9Objects, err := sdk.DecodeObjects(actual)
 			require.NoError(t, err)
-			errs := manifest.Validate(nobl9Objects)
+			errs = manifest.Validate(nobl9Objects)
 			require.Empty(t, errs, "failed to validate Nobl9 objects")
 		})
 	}

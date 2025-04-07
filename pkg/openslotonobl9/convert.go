@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"cmp"
 	"encoding/json"
+	"fmt"
 	"maps"
+	"os"
 	"slices"
 	"strings"
 
@@ -72,6 +74,14 @@ func opensloObjectToNobl9(object gjson.Result) (nobl9Object string, err error) {
 	rules, err := getConversionRules(opensloVersion, opensloKind)
 	if err != nil {
 		return "", err
+	}
+	if len(rules) == 0 {
+		fmt.Fprintf(os.Stderr, "no conversion rules for %s %s, skipping\n", opensloVersion, opensloKind)
+		return "", nil
+	}
+
+	if err = validateOpenSLOObject(object, opensloVersion, opensloKind); err != nil {
+		return "", errors.Wrapf(err, "failed to validate OpenSLO object")
 	}
 
 	nobl9Object = "{}"

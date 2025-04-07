@@ -12,6 +12,8 @@ require (
 	github.com/tidwall/sjson v1.2.5
 )
 
+replace github.com/OpenSLO/go-sdk => github.com/OpenSLO/go-sdk v0.3.1-0.20250407105402-277ee42f0235
+
 require (
 	github.com/BurntSushi/toml v1.5.0 // indirect
 	github.com/MicahParks/jwkset v0.8.0 // indirect
