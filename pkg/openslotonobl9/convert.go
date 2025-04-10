@@ -3,7 +3,6 @@ package openslotonobl9
 import (
 	"bytes"
 	"cmp"
-	"encoding/json"
 	"fmt"
 	"maps"
 	"os"
@@ -12,6 +11,8 @@ import (
 
 	"github.com/OpenSLO/go-sdk/pkg/openslo"
 	"github.com/OpenSLO/go-sdk/pkg/openslosdk"
+	"github.com/nobl9/nobl9-go/manifest"
+	"github.com/nobl9/nobl9-go/sdk"
 	"github.com/pkg/errors"
 	"github.com/tidwall/gjson"
 
@@ -19,46 +20,37 @@ import (
 	"github.com/nobl9/nobl9-openslo/internal/jsonpath"
 )
 
-func Convert(opensloData []byte, format openslosdk.ObjectFormat) ([]byte, error) {
-	opensloObjects, err := openslosdk.Decode(bytes.NewReader(opensloData), format)
+func Convert(opensloData []byte) ([]manifest.Object, error) {
+	objects, err := openslosdk.Decode(bytes.NewReader(opensloData), openslosdk.FormatYAML)
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to decode OpenSLO objects in %s format", format)
+		return nil, errors.Wrapf(err, "failed to decode OpenSLO objects in %s format", openslosdk.FormatYAML)
 	}
-	if len(opensloObjects) == 0 {
+	if len(objects) == 0 {
 		return nil, errors.New("no OpenSLO objects found")
 	}
-
-	var buf bytes.Buffer
-	if err = openslosdk.Encode(&buf, openslosdk.FormatJSON, opensloObjects...); err != nil {
-		return nil, errors.Wrap(err, "failed to encode OpenSLO objects to JSON")
+	if err = openslosdk.Validate(objects...); err != nil {
+		return nil, errors.Wrapf(err, "failed to validate OpenSLO objects")
 	}
 
-	r := gjson.Parse(buf.String())
-
-	var objects []gjson.Result
-	if r.IsArray() {
-		objects = r.Array()
-	} else {
-		objects = []gjson.Result{r}
-	}
-
-	nobl9Objects := make([]string, 0, len(objects))
+	nobl9JSONObjects := make([]string, 0, len(objects))
 	for _, object := range objects {
-		nobl9Object, err := opensloObjectToNobl9(object)
+		jsonObject, err := opensloObjectToNobl9(object)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to convert object from OpenSLO to Nobl9 format")
 		}
-		nobl9Objects = append(nobl9Objects, nobl9Object)
+		nobl9JSONObjects = append(nobl9JSONObjects, jsonObject)
 	}
 
-	var v any
-	if err = json.Unmarshal([]byte("["+strings.Join(nobl9Objects, ",")+"]"), &v); err != nil {
-		return nil, errors.Wrap(err, "failed to unmarshal Nobl9 objects")
-	}
-	return json.Marshal(v)
+	return sdk.DecodeObjects([]byte("[" + strings.Join(nobl9JSONObjects, ",") + "]"))
 }
 
-func opensloObjectToNobl9(object gjson.Result) (nobl9Object string, err error) {
+func opensloObjectToNobl9(opensloObject openslo.Object) (nobl9Object string, err error) {
+	var buf bytes.Buffer
+	if err = openslosdk.Encode(&buf, openslosdk.FormatJSON, opensloObject); err != nil {
+		return "", errors.Wrap(err, "failed to encode OpenSLO objects to JSON")
+	}
+	object := gjson.Parse(buf.String()).Array()[0]
+
 	walker := jsonpath.NewWalker()
 	walker.Walk(object, "")
 	paths := sortPaths(walker.Paths())

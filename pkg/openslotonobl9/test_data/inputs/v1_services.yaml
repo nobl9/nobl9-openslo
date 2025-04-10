@@ -20,3 +20,5 @@
       nobl9.com/metadata.project: non-default
       my.domain/custom: foo
     name: example-service
+  spec:
+    description: Example service description

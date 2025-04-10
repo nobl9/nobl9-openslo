@@ -25,6 +25,7 @@
     objectives:
       - displayName: Good
         target: 0.95
+        name: ""
         countMetrics:
           incremental: true
           good:

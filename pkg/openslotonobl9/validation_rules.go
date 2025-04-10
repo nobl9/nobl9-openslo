@@ -30,6 +30,8 @@ func validateOpenSLOV1Object(object gjson.Result, kind openslo.Kind) error {
 		if kindAnnotation.Exists() && !slices.Contains(nobl9DataSourceTypes, kindAnnotation.String()) {
 			return errors.Errorf("nobl9.com/kind must be one of: %s", strings.Join(nobl9DataSourceTypes, ", "))
 		}
+	case openslo.KindAlertPolicy:
+		
 	default:
 		if object.Get("metadata.annotations.nobl9.com/kind").Exists() {
 			return errors.New("nobl9.com/kind annotation is only allowed for DataSource kind")

@@ -22,3 +22,5 @@
       my.domain/custom: foo
     project: non-default
     name: example-service
+  spec:
+    description: Example service description

@@ -36,19 +36,22 @@ func TestToNobl9(t *testing.T) {
 			errs := manifest.Validate(expectedObjects)
 			require.Empty(t, errs, "failed to validate Nobl9 objects")
 
-			actual, err := Convert(inputFileData, openslosdk.FormatYAML)
+			actual, err := Convert(inputFileData)
+			require.NoError(t, err)
+			var buf bytes.Buffer
+			err = sdk.EncodeObjects(actual, &buf, manifest.ObjectFormatJSON)
 			require.NoError(t, err)
 
 			expectedJSON, err := yaml.YAMLToJSON(outputsFileData)
 			require.NoError(t, err)
-			assert.JSONEq(t, string(expectedJSON), string(actual))
+			assert.JSONEq(t, string(expectedJSON), buf.String())
 
 			opensloObjects, err := openslosdk.Decode(bytes.NewReader(inputFileData), openslosdk.FormatYAML)
 			require.NoError(t, err)
 			err = openslosdk.Validate(opensloObjects...)
 			require.NoError(t, err, "failed to validate OpenSLO objects")
 
-			nobl9Objects, err := sdk.DecodeObjects(actual)
+			nobl9Objects, err := sdk.DecodeObjects(buf.Bytes())
 			require.NoError(t, err)
 			errs = manifest.Validate(nobl9Objects)
 			require.Empty(t, errs, "failed to validate Nobl9 objects")
