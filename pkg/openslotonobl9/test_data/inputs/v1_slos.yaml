@@ -44,3 +44,45 @@
         calendar:
           startTime: 2022-01-01 12:00:00
           timeZone: America/New_York
+- apiVersion: openslo/v1
+  kind: SLO
+  metadata:
+    name: annotator-throughput
+    labels:
+      env:
+        - prod
+      team:
+        - team-a
+        - team-b
+    annotations:
+      my.domain/custom: foo
+      nobl9.com/metadata.project: my-project
+      nobl9.com/spec.indicator.metricSource.project: my-agent-project
+  spec:
+    description: Example Prometheus SLO
+    service: annotator
+    budgetingMethod: Occurrences
+    indicatorRef: annotator-throughput
+    objectives:
+      - displayName: Good
+        target: 0.95
+        op: gte
+        value: 1
+    timeWindow:
+      - duration: 1w
+        isRolling: false
+        calendar:
+          startTime: 2022-01-01 12:00:00
+          timeZone: America/New_York
+- apiVersion: openslo/v1
+  kind: SLI
+  metadata:
+    name: annotator-throughput
+  spec:
+    thresholdMetric:
+      metricSource:
+        metricSourceRef: my-prometheus
+        type: prometheus
+        spec:
+          promql: |
+            sum(min_over_time(kafka_consumergroup_lag{k8s_cluster="prod", consumergroup="annotator", topic="annotator-in"}[2m]))

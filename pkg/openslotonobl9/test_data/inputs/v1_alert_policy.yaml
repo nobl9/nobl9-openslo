@@ -1,7 +1,7 @@
 - apiVersion: openslo/v1
   kind: AlertPolicy
   metadata:
-    name: low-priority
+    name: low-priority-1
     displayName: Low Priority
     labels:
       env:
@@ -26,4 +26,43 @@
             threshold: 2.0
             lookbackWindow: 1h
     notificationTargets:
-      - targetRef: on-call-mail-notification
+      - targetRef: some-target
+- apiVersion: openslo/v1
+  kind: AlertPolicy
+  metadata:
+    name: low-priority-2
+    displayName: Low Priority
+    labels:
+      env:
+        - prod
+      team:
+        - team-a
+        - team-b
+  spec:
+    description: Alert policy for low priority notifications, notifies on-call via email
+    alertWhenBreaching: true
+    conditions:
+      - conditionRef: memory-usage-breach
+    notificationTargets:
+      - kind: AlertNotificationTarget
+        metadata:
+          name: on-call-mail-notification
+          annotations:
+            nobl9.com/metadata.project: non-default
+            nobl9.com/spec.email.to.0: example-email@nobl9-test.com
+        spec:
+          description: Notifies by a mail message to the on-call devops mailing group
+          target: email
+- apiVersion: openslo/v1
+  kind: AlertCondition
+  metadata:
+    name: memory-usage-breach
+    displayName: Memory Usage breaching
+  spec:
+    description: SLO burn rate for memory-usage-breach exceeds 2
+    severity: High
+    condition:
+      kind: burnrate
+      op: gte
+      threshold: 4.0
+      lookbackWindow: 1h

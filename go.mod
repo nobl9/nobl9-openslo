@@ -3,7 +3,7 @@ module github.com/nobl9/nobl9-openslo
 go 1.24
 
 require (
-	github.com/OpenSLO/go-sdk v0.3.1
+	github.com/OpenSLO/go-sdk v0.5.1
 	github.com/goccy/go-yaml v1.17.1
 	github.com/nobl9/nobl9-go v0.100.0
 	github.com/pkg/errors v0.9.1
@@ -28,12 +28,12 @@ require (
 	github.com/teambition/rrule-go v1.8.2 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
-	golang.org/x/exp v0.0.0-20250305212735-054e65f0b394 // indirect
+	golang.org/x/exp v0.0.0-20250408133849-7e4ce0ab07d0 // indirect
 	golang.org/x/mod v0.24.0 // indirect
 	golang.org/x/sync v0.13.0 // indirect
 	golang.org/x/text v0.24.0 // indirect
 	golang.org/x/time v0.11.0 // indirect
-	golang.org/x/tools v0.31.0 // indirect
+	golang.org/x/tools v0.32.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	sigs.k8s.io/yaml v1.4.0 // indirect
 )

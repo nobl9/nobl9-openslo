@@ -28,6 +28,10 @@ func Convert(opensloData []byte) ([]manifest.Object, error) {
 	if len(objects) == 0 {
 		return nil, errors.New("no OpenSLO objects found")
 	}
+	objects, err = resolveObjectReferences(objects)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to resolve OpenSLO object references")
+	}
 	if err = openslosdk.Validate(objects...); err != nil {
 		return nil, errors.Wrapf(err, "failed to validate OpenSLO objects")
 	}
@@ -40,7 +44,6 @@ func Convert(opensloData []byte) ([]manifest.Object, error) {
 		}
 		nobl9JSONObjects = append(nobl9JSONObjects, jsonObject)
 	}
-
 	return sdk.DecodeObjects([]byte("[" + strings.Join(nobl9JSONObjects, ",") + "]"))
 }
 

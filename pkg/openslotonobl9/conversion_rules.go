@@ -75,6 +75,7 @@ var v1SLORules = conversionrules.Rules{
 	"spec.objectives.#.timeSliceWindow":                  conversionrules.Direct(),
 	"spec.objectives.#.target":                           conversionrules.Direct(),
 	"spec.objectives.#.op":                               conversionrules.Direct(),
+	"spec.objectives.#.value":                            conversionrules.Direct(),
 	"spec.timeWindow.0.duration":                         conversionrules.Custom(convertSLOTimeWindowDuration),
 	"spec.timeWindow.0.isRolling":                        conversionrules.Path("spec.timeWindows.0.isRolling"),
 	"spec.timeWindow.0.calendar":                         conversionrules.Path("spec.timeWindows.0.calendar"),

@@ -1,7 +1,32 @@
 - apiVersion: n9/v1alpha
   kind: AlertPolicy
   metadata:
-    name: low-priority
+    name: low-priority-1
+    displayName: Low Priority
+    project: default
+    labels:
+      env:
+        - prod
+      team:
+        - team-a
+        - team-b
+    annotations:
+      openslo.com/apiVersion: openslo/v1
+  spec:
+    description: Alert policy for low priority notifications, notifies on-call via email
+    alertMethods:
+      - metadata:
+          name: some-target
+    conditions:
+      - alertingWindow: 1h
+        measurement: averageBurnRate
+        op: gte
+        value: 2.0
+    severity: High
+- apiVersion: n9/v1alpha
+  kind: AlertPolicy
+  metadata:
+    name: low-priority-2
     displayName: Low Priority
     project: default
     labels:
@@ -21,5 +46,17 @@
       - alertingWindow: 1h
         measurement: averageBurnRate
         op: gte
-        value: 2.0
+        value: 4.0
     severity: High
+- apiVersion: n9/v1alpha
+  kind: AlertMethod
+  metadata:
+    name: on-call-mail-notification
+    project: non-default
+    annotations:
+      openslo.com/apiVersion: openslo/v1
+  spec:
+    description: Notifies by a mail message to the on-call devops mailing group
+    email:
+      to:
+        - example-email@nobl9-test.com
