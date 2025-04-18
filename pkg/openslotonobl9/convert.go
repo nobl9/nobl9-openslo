@@ -11,6 +11,7 @@ import (
 
 	"github.com/OpenSLO/go-sdk/pkg/openslo"
 	"github.com/OpenSLO/go-sdk/pkg/openslosdk"
+	"github.com/nobl9/govy/pkg/govy"
 	"github.com/nobl9/nobl9-go/manifest"
 	"github.com/nobl9/nobl9-go/sdk"
 	"github.com/pkg/errors"
@@ -20,15 +21,11 @@ import (
 	"github.com/nobl9/nobl9-openslo/internal/jsonpath"
 )
 
-func Convert(opensloData []byte) ([]manifest.Object, error) {
-	objects, err := openslosdk.Decode(bytes.NewReader(opensloData), openslosdk.FormatYAML)
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to decode OpenSLO objects in %s format", openslosdk.FormatYAML)
-	}
+func Convert(objects []openslo.Object) ([]manifest.Object, error) {
 	if len(objects) == 0 {
-		return nil, errors.New("no OpenSLO objects found")
+		return nil, errors.New("no OpenSLO objects provided")
 	}
-	objects, err = resolveObjectReferences(objects)
+	objects, err := resolveObjectReferences(objects)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to resolve OpenSLO object references")
 	}
@@ -40,7 +37,11 @@ func Convert(opensloData []byte) ([]manifest.Object, error) {
 	for _, object := range objects {
 		jsonObject, err := opensloObjectToNobl9(object)
 		if err != nil {
-			return nil, errors.Wrapf(err, "failed to convert object from OpenSLO to Nobl9 format")
+			// Do not wrap validation errors, they already have all the details to identify the faulty object.
+			switch err.(type) {
+			case *govy.ValidatorError, govy.ValidatorErrors:
+				return nil, err
+			}
 		}
 		nobl9JSONObjects = append(nobl9JSONObjects, jsonObject)
 	}
@@ -48,6 +49,10 @@ func Convert(opensloData []byte) ([]manifest.Object, error) {
 }
 
 func opensloObjectToNobl9(opensloObject openslo.Object) (nobl9Object string, err error) {
+	if err = opensloObjectValidation.Validate(opensloObject); err != nil {
+		return "", err
+	}
+
 	var buf bytes.Buffer
 	if err = openslosdk.Encode(&buf, openslosdk.FormatJSON, opensloObject); err != nil {
 		return "", errors.Wrap(err, "failed to encode OpenSLO objects to JSON")

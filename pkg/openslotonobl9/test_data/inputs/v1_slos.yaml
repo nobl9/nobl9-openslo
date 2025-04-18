@@ -15,6 +15,8 @@
       nobl9.com/spec.indicator.metricSource.project: my-agent-project
   spec:
     description: Example Prometheus SLO
+    alertPolicies:
+      - alertPolicyRef: on-call-devops-mail-notification
     service: web
     budgetingMethod: Occurrences
     indicator:

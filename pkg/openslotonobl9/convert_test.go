@@ -6,8 +6,12 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/OpenSLO/go-sdk/pkg/openslo"
+	"github.com/OpenSLO/go-sdk/pkg/openslo/v1alpha"
 	"github.com/OpenSLO/go-sdk/pkg/openslosdk"
 	"github.com/goccy/go-yaml"
+	"github.com/nobl9/govy/pkg/govytest"
+	"github.com/nobl9/govy/pkg/rules"
 	"github.com/nobl9/nobl9-go/manifest"
 	"github.com/nobl9/nobl9-go/sdk"
 	"github.com/stretchr/testify/assert"
@@ -19,7 +23,7 @@ const (
 	outputsDir = "./test_data/outputs/"
 )
 
-func TestToNobl9(t *testing.T) {
+func TestConvert(t *testing.T) {
 	inputs := listAllFilesInDir(t, inputsDir)
 	outputs := listAllFilesInDir(t, outputsDir)
 	require.Len(t, inputs, len(outputs))
@@ -36,7 +40,10 @@ func TestToNobl9(t *testing.T) {
 			errs := manifest.Validate(expectedObjects)
 			require.Empty(t, errs, "failed to validate Nobl9 objects")
 
-			actual, err := Convert(inputFileData)
+			opensloObjects, err := openslosdk.Decode(bytes.NewReader(inputFileData), openslosdk.FormatYAML)
+			require.NoError(t, err)
+
+			actual, err := Convert(opensloObjects)
 			require.NoError(t, err)
 			var buf bytes.Buffer
 			err = sdk.EncodeObjects(actual, &buf, manifest.ObjectFormatJSON)
@@ -46,15 +53,39 @@ func TestToNobl9(t *testing.T) {
 			require.NoError(t, err)
 			assert.JSONEq(t, string(expectedJSON), buf.String())
 
-			opensloObjects, err := openslosdk.Decode(bytes.NewReader(inputFileData), openslosdk.FormatYAML)
-			require.NoError(t, err)
-			err = openslosdk.Validate(opensloObjects...)
-			require.NoError(t, err, "failed to validate OpenSLO objects")
-
 			nobl9Objects, err := sdk.DecodeObjects(buf.Bytes())
 			require.NoError(t, err)
 			errs = manifest.Validate(nobl9Objects)
 			require.Empty(t, errs, "failed to validate Nobl9 objects")
+		})
+	}
+}
+
+// Golden path should be covered with [TestConvert].
+func TestConvert_Validate(t *testing.T) {
+	tests := map[string]struct {
+		objects []openslo.Object
+		errors  []govytest.ExpectedRuleError
+	}{
+		"invalid version": {
+			objects: []openslo.Object{v1alpha.NewService(
+				v1alpha.Metadata{Name: "test"},
+				v1alpha.ServiceSpec{},
+			)},
+			errors: []govytest.ExpectedRuleError{
+				{
+					PropertyName: "apiVersion",
+					Code:         rules.ErrorCodeOneOf,
+				},
+			},
+		},
+	}
+
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			_, err := Convert(tc.objects)
+			require.Error(t, err)
+			govytest.AssertError(t, err, tc.errors...)
 		})
 	}
 }
