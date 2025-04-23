@@ -31,18 +31,29 @@
   ],
   "words": [
     "endef",
+    "fatalf",
+    "gjson",
     "gobin",
     "gofmt",
     "goimports",
     "golangci",
     "gosec",
     "govulncheck",
+    "govy",
+    "govytest",
+    "inlines",
     "ldflags",
     "nobl",
+    "openslo",
+    "openslosdk",
+    "openslotonobl9",
     "plantuml",
+    "sjson",
     "sloctl",
+    "slos",
     "tpng",
     "vuln",
-    "vulns"
+    "vulns",
+    "wrapf"
   ]
 }

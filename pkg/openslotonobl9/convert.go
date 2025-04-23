@@ -21,6 +21,11 @@ import (
 	"github.com/nobl9/nobl9-openslo/internal/jsonpath"
 )
 
+const (
+	DomainNobl9   = "nobl9.com"
+	DomainOpenSLO = "openslo.com"
+)
+
 func Convert(objects []openslo.Object) ([]manifest.Object, error) {
 	if len(objects) == 0 {
 		return nil, errors.New("no OpenSLO objects provided")
@@ -78,10 +83,6 @@ func opensloObjectToNobl9(opensloObject openslo.Object) (nobl9Object string, err
 	if len(rules) == 0 {
 		fmt.Fprintf(os.Stderr, "no conversion rules for %s %s, skipping\n", opensloVersion, opensloKind)
 		return "", nil
-	}
-
-	if err = validateOpenSLOObject(object, opensloVersion, opensloKind); err != nil {
-		return "", errors.Wrapf(err, "failed to validate OpenSLO object")
 	}
 
 	nobl9Object = "{}"

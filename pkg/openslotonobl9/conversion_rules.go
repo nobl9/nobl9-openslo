@@ -3,17 +3,12 @@ package openslotonobl9
 import (
 	"encoding/json"
 	"maps"
-	"reflect"
 	"strings"
 
 	"github.com/OpenSLO/go-sdk/pkg/openslo"
 	v1 "github.com/OpenSLO/go-sdk/pkg/openslo/v1"
 	"github.com/nobl9/nobl9-go/manifest"
-	"github.com/nobl9/nobl9-go/manifest/v1alpha/agent"
-	"github.com/nobl9/nobl9-go/manifest/v1alpha/alertmethod"
 	"github.com/nobl9/nobl9-go/manifest/v1alpha/alertpolicy"
-	"github.com/nobl9/nobl9-go/manifest/v1alpha/direct"
-	"github.com/nobl9/nobl9-go/manifest/v1alpha/slo"
 	"github.com/nobl9/nobl9-go/manifest/v1alpha/twindow"
 	"github.com/pkg/errors"
 	"github.com/tidwall/sjson"
@@ -60,6 +55,7 @@ var v1CommonRules = conversionrules.Rules{
 	"spec.description":     conversionrules.Direct(),
 }
 
+// nolint: lll
 var v1SLORules = conversionrules.Rules{
 	"spec.service":                                       conversionrules.Direct(),
 	"spec.budgetingMethod":                               conversionrules.Direct(),
@@ -149,7 +145,7 @@ func convertSLOTimeWindowDuration(jsonObject, path string, v any) (updatedJSON s
 	return sjson.Set(jsonObject, "spec.timeWindows.0.count", value)
 }
 
-func durationShorthandUnitToTimeWindowUnit(duration v1.DurationShorthand) (string, int) {
+func durationShorthandUnitToTimeWindowUnit(duration v1.DurationShorthand) (unit string, value int) {
 	switch duration.GetUnit() {
 	case v1.DurationShorthandUnitMinute:
 		return twindow.Minute.String(), duration.GetValue()
@@ -185,9 +181,6 @@ func convertSLOMetricSource(typ sliMetricType) conversionrules.ConversionFunc {
 		if err != nil {
 			return "", err
 		}
-		if err = validateMetricSpecName(metricSource.Type); err != nil {
-			return "", err
-		}
 		var newPath string
 		switch typ {
 		case sliMetricTypeRaw:
@@ -214,30 +207,9 @@ func convertSLOMetricSource(typ sliMetricType) conversionrules.ConversionFunc {
 	}
 }
 
-func validateMetricSpecName(name string) error {
-	rt := reflect.TypeOf(slo.MetricSpec{})
-	names := make([]string, 0, rt.NumField())
-	for i := range rt.NumField() {
-		tag := rt.Field(i).Tag.Get("json")
-		split := strings.Split(tag, ",")
-		if len(split) == 0 {
-			continue
-		}
-		fieldName := split[0]
-		if fieldName == name {
-			return nil
-		}
-		names = append(names, fieldName)
-	}
-	return errors.Errorf("unsupported metric spec name %s, try one of: %s", name, strings.Join(names, ", "))
-}
-
 func convertDataSourceSpec(jsonObject, _ string, v any) (updatedJSON string, err error) {
 	spec, err := anyToType[v1.DataSourceSpec](v)
 	if err != nil {
-		return "", err
-	}
-	if err = validateDataSourceTypeName(manifest.KindAgent, spec.Type); err != nil {
 		return "", err
 	}
 	return sjson.SetRaw(jsonObject, "spec."+spec.Type, string(spec.ConnectionDetails))
@@ -260,65 +232,8 @@ func convertNotificationTarget(jsonObject, path string, v any) (updatedJSON stri
 	if !ok {
 		return "", errors.Errorf("invalid type for %s, expected string, got %T", path, v)
 	}
-	alertMethod, err := getAlertMethodTypeForName(target)
-	if err != nil {
-		return "", err
-	}
+	alertMethod := getAlertMethodTypes()[target]
 	return sjson.Set(jsonObject, "spec."+target, alertMethod)
-}
-
-func validateDataSourceTypeName(kind manifest.Kind, name string) error {
-	var rt reflect.Type
-	switch kind {
-	case manifest.KindDirect:
-		rt = reflect.TypeOf(direct.Spec{})
-	default:
-		rt = reflect.TypeOf(agent.Spec{})
-	}
-	names := make([]string, 0, rt.NumField())
-	for i := range rt.NumField() {
-		field := rt.Field(i)
-		if !strings.HasSuffix(field.Type.String(), "Config") {
-			continue
-		}
-		tag := field.Tag.Get("json")
-		split := strings.Split(tag, ",")
-		if len(split) == 0 {
-			continue
-		}
-		fieldName := split[0]
-		if fieldName == name {
-			return nil
-		}
-		names = append(names, fieldName)
-	}
-	return errors.Errorf("unsupported data source type name %s, try one of: %s", name, strings.Join(names, ", "))
-}
-
-func getAlertMethodTypeForName(name string) (any, error) {
-	rt := reflect.TypeOf(alertmethod.Spec{})
-	names := make([]string, 0, rt.NumField())
-	for i := range rt.NumField() {
-		field := rt.Field(i)
-		if !strings.HasSuffix(field.Type.String(), "Method") {
-			continue
-		}
-		tag := field.Tag.Get("json")
-		split := strings.Split(tag, ",")
-		if len(split) == 0 {
-			continue
-		}
-		fieldName := split[0]
-		if fieldName == name {
-			typ := field.Type
-			if typ.Kind() == reflect.Ptr {
-				typ = typ.Elem()
-			}
-			return reflect.Zero(typ).Interface(), nil
-		}
-		names = append(names, fieldName)
-	}
-	return nil, errors.Errorf("unsupported alert method type name %s, try one of: %s", name, strings.Join(names, ", "))
 }
 
 func mergeConversionRules(rules ...conversionrules.Rules) conversionrules.Rules {

@@ -18,8 +18,7 @@ func (w *Walker) Paths() map[string]any {
 
 func (w *Walker) Walk(r gjson.Result, path string) {
 	r.ForEach(func(key, value gjson.Result) bool {
-		var pathElement string
-		pathElement = key.String()
+		var pathElement string = key.String()
 
 		var currentPath string
 		switch {

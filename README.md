@@ -64,22 +64,25 @@ func main() {
 
 1. Resolve object references, by either inlining or exporting dependent objects.
 2. Validate decoded and resolved OpenSLO objects according to OpenSLO-defined rules.
-3. Validate decoded and resolved OpenSLO objects according to Nobl9-defined, custom rules.
+3. Validate decoded and resolved OpenSLO objects according to Nobl9-defined,
+   custom rules.
 4. Convert OpenSLO objects to Nobl9 objects.
 
 ### Objects mapping
 
 The following OpenSLO objects map to Nobl9 schema:
 
-| OpenSLO object             | Nobl9 object        | Supported | Extra rules                                                      |
-|----------------------------|---------------------|:---------:|------------------------------------------------------------------|
+<!-- markdownlint-disable MD013 -->
+| OpenSLO object             | Nobl9 object        | Supported  | Extra rules                                                      |
+|----------------------------|---------------------|:----------:|------------------------------------------------------------------|
 | v1.Service                 | v1alpha.Service     |     ✅     |                                                                  |
 | v1.SLO                     | v1alpha.SLO         |     ✅     |                                                                  |
-| v1.SLI                     | -                   |    ✖️     | If referenced by SLO it will be inlined.                         |
+| v1.SLI                     | -                   |    ✖️       | If referenced by SLO it will be inlined.                         |
 | v1.DataSource              | v1alpha.Agent       |     ✅     | By default Agent is created, use annotations to create a Direct. |
 | v1.AlertPolicy             | v1alpha.AlertPolicy |     ✅     |                                                                  |
-| v1.AlertCondition          | -                   |    ✖️     | If referenced by AlertPolicy it will be inlined.                 |
+| v1.AlertCondition          | -                   |    ✖️       | If referenced by AlertPolicy it will be inlined.                 |
 | v1.AlertNotificationTarget | v1.AlertMethod      |     ✅     |                                                                  |
+<!-- markdownlint-enable MD013 -->
 
 In addition, there are some special rules for generic fields in OpenSLO schema.
 
@@ -158,7 +161,7 @@ Each field in a resulting Nobl9 object can be modified through the use of
 In order to change a certain field in a resulting Nobl9 object,
 the user must provide an annotation with the following format:
 
-```
+```text
 nobl9.com/<field_path>: <value>
 ```
 
