@@ -2,7 +2,8 @@
 
 [OpenSLO](https://openslo.com) converter for Nobl9!
 
-Convert OpenSLO schema to [Nobl9 configuration](https://docs.nobl9.com/yaml-guide) with ease 🚀
+Convert OpenSLO schema to
+[Nobl9 configuration](https://docs.nobl9.com/yaml-guide) with ease 🚀
 
 > [!TIP]
 > Starting from [sloctl](https://github.com/nobl9/sloctl)
