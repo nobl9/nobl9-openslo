@@ -2,6 +2,14 @@
 
 [OpenSLO](https://openslo.com) converter for Nobl9!
 
+Convert OpenSLO schema to
+[Nobl9 configuration](https://docs.nobl9.com/yaml-guide) with ease 🚀
+
+> [!TIP]
+> Starting from [sloctl](https://github.com/nobl9/sloctl)
+> [version 0.12.0](https://github.com/nobl9/sloctl/releases/tag/v0.12.0)
+> OpenSLO converter is available as a CLI through `sloctl convert openslo` command.
+
 ## Installation
 
 To add the latest version to your Go module run:
