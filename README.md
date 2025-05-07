@@ -113,7 +113,8 @@ query:
     promql: sum(http_request_duration_seconds_count{handler="/api/v1/slos"})
 ```
 
-Each field within `metricSource.spec` must correspond exactly to the definitions in Nobl9's `query.<metricSource.type>`.
+Each field within `metricSource.spec` must correspond exactly to the
+definitions in Nobl9's `query.<metricSource.type>`.
 
 #### v1.DataSource
 
@@ -143,7 +144,8 @@ appDynamics:
 
 ### Inlining and exporting rules
 
-The list of objects passed to the `Convert` method must include all objects referenced within that list.
+The list of objects passed to the `Convert` method must include all
+objects referenced within that list.
 For instance, if `v1.SLO` named _my-slo_ references `v1.SLI` named _my-sli_,
 then the list must contain `v1.SLI` named _my-sli_.
 
@@ -162,9 +164,10 @@ then the list must contain `v1.SLI` named _my-sli_.
 
 ### Modifying Nobl9 objects
 
-Each field in the resulting Nobl9 object can be modified using the
-`metadata.annotations` field in the OpenSLO object.
-To change a field in the resulting Nobl9 object, provide an annotation in the following format:
+Each field in the resulting Nobl9 object can be modified
+using the `metadata.annotations` field in the OpenSLO object.
+To change a field in the resulting Nobl9 object, provide an 
+annotation in the following format:
 
 ```text
 nobl9.com/<field_path>: <value>
