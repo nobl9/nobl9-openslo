@@ -12,7 +12,7 @@ Convert OpenSLO schema to
 
 ## Installation
 
-To add the latest version to your Go module run:
+To add the latest version to your Go module, run:
 
 ```sh
 go get github.com/nobl9/nobl9-go
@@ -59,7 +59,7 @@ func main() {
 	// Create Nobl9 SDK client.
 	client, err := sdk.DefaultClient()
 	if err != nil {
-		log.Fatalf("failed to create Nobl9 SKD client: %v", err)
+		log.Fatalf("failed to create Nobl9 SDK client: %v", err)
 	}
 	// Apply the objects.
 	if err = client.Objects().V1().Apply(context.Background(), nobl9Objects); err != nil {
@@ -70,7 +70,7 @@ func main() {
 
 ## How it works
 
-1. Resolve object references, by either inlining or exporting dependent objects.
+1. Resolve object references by either inlining or exporting dependent objects.
 2. Validate decoded and resolved OpenSLO objects according to OpenSLO-defined rules.
 3. Validate decoded and resolved OpenSLO objects according to Nobl9-defined,
    custom rules.
@@ -81,23 +81,23 @@ func main() {
 The following OpenSLO objects map to Nobl9 schema:
 
 <!-- markdownlint-disable MD013 -->
-| OpenSLO object             | Nobl9 object        | Supported  | Extra rules                                                      |
-|----------------------------|---------------------|:----------:|------------------------------------------------------------------|
-| v1.Service                 | v1alpha.Service     |     ✅     |                                                                  |
-| v1.SLO                     | v1alpha.SLO         |     ✅     |                                                                  |
-| v1.SLI                     | -                   |    ✖️       | If referenced by SLO it will be inlined.                         |
-| v1.DataSource              | v1alpha.Agent       |     ✅     | By default Agent is created, use annotations to create a Direct. |
-| v1.AlertPolicy             | v1alpha.AlertPolicy |     ✅     |                                                                  |
-| v1.AlertCondition          | -                   |    ✖️       | If referenced by AlertPolicy it will be inlined.                 |
-| v1.AlertNotificationTarget | v1.AlertMethod      |     ✅     |                                                                  |
+| OpenSLO object             | Nobl9 object        | Supported | Extra rules                                                                                |
+|----------------------------|---------------------|:---------:|--------------------------------------------------------------------------------------------|
+| v1.Service                 | v1alpha.Service     |     ✅     |                                                                                            |
+| v1.SLO                     | v1alpha.SLO         |     ✅     |                                                                                            |
+| v1.SLI                     | -                   |    ✖️     | Inlined when referenced by SLO.                                                            |
+| v1.DataSource              | v1alpha.Agent       |     ✅     | By default, an Agent connection is created. Use annotations to create a Direct connection. |
+| v1.AlertPolicy             | v1alpha.AlertPolicy |     ✅     |                                                                                            |
+| v1.AlertCondition          | -                   |    ✖️     | Inlined when referenced by AlertPolicy.                                                    |
+| v1.AlertNotificationTarget | v1.AlertMethod      |     ✅     |                                                                                            |
 <!-- markdownlint-enable MD013 -->
 
-In addition, there are some special rules for generic fields in OpenSLO schema.
+Generic fields in the OpenSLO schema also have additional rules applied.
 
 #### v1.SLI
 
-`spec..metricSource.spec` field is directly converted to a matching Nobl9
-metric spec based on `metricSource.type` field.
+`spec.metricSource.spec` field is directly converted to a matching Nobl9
+metric spec based on the `metricSource.type` field.
 
 Example:
 
@@ -113,14 +113,13 @@ query:
     promql: sum(http_request_duration_seconds_count{handler="/api/v1/slos"})
 ```
 
-You can see that each of the fields in the `metricSource.spec` must be exactly
-what Nobl9 `query.<metricSource.type>` defines.
+Each field within `metricSource.spec` must correspond exactly to the definitions in Nobl9's `query.<metricSource.type>`.
 
 #### v1.DataSource
 
-Similar to [_v1.SLI_](#v1sli), `spec.type` field is used to determine the type
-of Nobl9 data source details and `spec.connectionDetails` content must match
-the Nobl9 definition for that data source type.
+Similar to [_v1.SLI_](#v1sli), the `spec.type` field is used to determine the type
+of Nobl9 data source details, and `spec.connectionDetails` content must match
+Nobl9's definition for that data source type.
 
 Example:
 
@@ -144,8 +143,7 @@ appDynamics:
 
 ### Inlining and exporting rules
 
-The list of objects passed to `Convert` method must contain all objects
-that are referenced by the objects in the list.
+The list of objects passed to the `Convert` method must include all objects referenced within that list.
 For instance, if `v1.SLO` named _my-slo_ references `v1.SLI` named _my-sli_,
 then the list must contain `v1.SLI` named _my-sli_.
 
@@ -164,10 +162,9 @@ then the list must contain `v1.SLI` named _my-sli_.
 
 ### Modifying Nobl9 objects
 
-Each field in a resulting Nobl9 object can be modified through the use of
-`metadata.annotations` field in OpenSLO object.
-In order to change a certain field in a resulting Nobl9 object,
-the user must provide an annotation with the following format:
+Each field in the resulting Nobl9 object can be modified using the
+`metadata.annotations` field in the OpenSLO object.
+To change a field in the resulting Nobl9 object, provide an annotation in the following format:
 
 ```text
 nobl9.com/<field_path>: <value>
@@ -200,7 +197,7 @@ spec:
 
 Common use cases:
 
-- `nobl9.com/metadata.project` - sets the project for the object.
-- `nobl9.com/kind` - sets the service kind for the object.
-  This is a special case, only allowed for `DataSource`, this way
-  users can decide whether to convert `DataSource` to `Agent` or `Direct`.
+- `nobl9.com/metadata.project` sets the project for the object.
+- `nobl9.com/kind` sets the service kind for the object.
+  This applies only to `DataSource`, allowing
+  users to specify `DataSource` conversion to either `Agent` or `Direct`.
