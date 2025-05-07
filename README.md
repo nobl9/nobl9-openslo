@@ -166,7 +166,7 @@ then the list must contain `v1.SLI` named _my-sli_.
 
 Each field in the resulting Nobl9 object can be modified
 using the `metadata.annotations` field in the OpenSLO object.
-To change a field in the resulting Nobl9 object, provide an 
+To change a field in the resulting Nobl9 object, provide an
 annotation in the following format:
 
 ```text
