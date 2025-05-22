@@ -36,8 +36,8 @@ github.com/mattn/go-colorable v0.1.14 h1:9A9LHSqF/7dyVVX6g0U9cwm9pG3kP9gSzcuIPHP
 github.com/mattn/go-colorable v0.1.14/go.mod h1:6LmQG8QLFO4G5z1gPvYEzlUgJ2wF+stgPZH1UqBm1s8=
 github.com/mattn/go-isatty v0.0.20 h1:xfD0iDuEKnDkl03q4limB+vH+GxLEtL/jb4xVJSWWEY=
 github.com/mattn/go-isatty v0.0.20/go.mod h1:W+V8PltTTMOvKvAeJH7IuucS94S2C6jfK/D7dTCTo3Y=
-github.com/nobl9/govy v0.17.0 h1:jrl6tDVWWGttwnczBXHgNniC1OOunJV+2X2my7OqCQI=
-github.com/nobl9/govy v0.17.0/go.mod h1:t5EM5dz77gCzYx+U3Shf9/+lng+fwGRrD0k2hc99uuI=
+github.com/nobl9/govy v0.18.0 h1:EFNSFyS1ndAmWsHMvpR3T8vlLog4uvwtIjSUIKaJhW0=
+github.com/nobl9/govy v0.18.0/go.mod h1:t5EM5dz77gCzYx+U3Shf9/+lng+fwGRrD0k2hc99uuI=
 github.com/nobl9/nobl9-go v0.101.1-0.20250423222448-0b973d674a97 h1:Y9HbalGP+Xg7kNdoFd4nQlKQSKsPUkr/rot+T3EDnoo=
 github.com/nobl9/nobl9-go v0.101.1-0.20250423222448-0b973d674a97/go.mod h1:JnWuvYrqgNp8ppS6Y3/TcFmfrx8AuuoJ6zrPEoK2HLY=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=

@@ -5,7 +5,7 @@ go 1.24
 require (
 	github.com/OpenSLO/go-sdk v0.6.0
 	github.com/goccy/go-yaml v1.17.1
-	github.com/nobl9/govy v0.17.0
+	github.com/nobl9/govy v0.18.0
 	github.com/nobl9/nobl9-go v0.101.1-0.20250423222448-0b973d674a97
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.10.0
