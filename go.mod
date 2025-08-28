@@ -8,7 +8,7 @@ require (
 	github.com/nobl9/govy v0.20.0
 	github.com/nobl9/nobl9-go v0.101.1-0.20250423222448-0b973d674a97
 	github.com/pkg/errors v0.9.1
-	github.com/stretchr/testify v1.11.0
+	github.com/stretchr/testify v1.11.1
 	github.com/tidwall/gjson v1.18.0
 	github.com/tidwall/sjson v1.2.5
 )
