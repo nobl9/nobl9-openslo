@@ -3,7 +3,7 @@ module github.com/nobl9/nobl9-openslo
 go 1.24
 
 require (
-	github.com/OpenSLO/go-sdk v0.6.2
+	github.com/OpenSLO/go-sdk v0.8.0
 	github.com/goccy/go-yaml v1.18.0
 	github.com/nobl9/govy v0.20.0
 	github.com/nobl9/nobl9-go v0.101.1-0.20250423222448-0b973d674a97
@@ -35,5 +35,5 @@ require (
 	golang.org/x/time v0.11.0 // indirect
 	golang.org/x/tools v0.35.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	sigs.k8s.io/yaml v1.5.0 // indirect
+	sigs.k8s.io/yaml v1.6.0 // indirect
 )
