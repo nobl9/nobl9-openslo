@@ -9,11 +9,9 @@ LDFLAGS += -s -w
 # renovate datasource=github-releases depName=securego/gosec
 GOSEC_VERSION := v2.22.10
 # renovate datasource=github-releases depName=golangci/golangci-lint
-GOLANGCI_LINT_VERSION := v1.64.8
+GOLANGCI_LINT_VERSION := v2.8.0
 # renovate datasource=go depName=golang.org/x/vuln/cmd/govulncheck
 GOVULNCHECK_VERSION := v1.1.4
-# renovate datasource=go depName=golang.org/x/tools/cmd/goimports
-GOIMPORTS_VERSION := v0.39.0
 
 # Check if the program is present in $PATH and install otherwise.
 # ${1} - oneOf{binary,yarn}
@@ -36,9 +34,9 @@ define _print_check_step
 endef
 
 .PHONY: build
-## Build nobl9-openslo binary.
+## Build nobl9-openslo (library project - no binary to build).
 build:
-	go build -ldflags="$(LDFLAGS)" -o $(BIN_DIR)/$(APP_NAME) ./cmd
+	@echo "This is a library project, no binary to build. Run 'make test' to verify."
 
 .PHONY: test
 ## Run all unit tests.
@@ -116,9 +114,8 @@ format: format/go format/cspell
 ## Format Go files.
 format/go:
 	echo "Formatting Go files..."
-	$(call _ensure_installed,binary,goimports)
-	gofmt -l -w -s .
-	$(BIN_DIR)/goimports -local=github.com/nobl9/nobl9-openslo -w .
+	$(call _ensure_installed,binary,golangci-lint)
+	$(BIN_DIR)/golangci-lint fmt
 
 ## Format cspell config file.
 format/cspell:
@@ -126,9 +123,9 @@ format/cspell:
 	$(call _ensure_installed,yarn,yaml)
 	yarn --silent format-cspell-config
 
-.PHONY: install install/yarn install/golangci-lint install/gosec install/govulncheck install/goimports
+.PHONY: install install/yarn install/golangci-lint install/gosec install/govulncheck
 ## Install all dev dependencies.
-install: install/yarn install/golangci-lint install/gosec install/govulncheck install/goimports
+install: install/yarn install/golangci-lint install/gosec install/govulncheck
 
 ## Install JS dependencies with yarn.
 install/yarn:
@@ -151,11 +148,6 @@ install/gosec:
 install/govulncheck:
 	echo "Installing govulncheck..."
 	$(call _install_go_binary,golang.org/x/vuln/cmd/govulncheck@$(GOVULNCHECK_VERSION))
-
-## Install goimports (https://pkg.go.dev/golang.org/x/tools/cmd/goimports).
-install/goimports:
-	echo "Installing goimports..."
-	$(call _install_go_binary,golang.org/x/tools/cmd/goimports@$(GOIMPORTS_VERSION))
 
 .PHONY: help
 ## Print this help message.

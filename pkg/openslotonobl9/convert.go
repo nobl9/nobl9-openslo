@@ -112,7 +112,7 @@ func sortPaths(pathsMap map[string]any) []pathTuple {
 		"spec.indicator.spec.thresholdMetric": strings.HasPrefix,
 	}
 
-	keys := slices.SortedFunc(maps.Keys(pathsMap), func(s1 string, s2 string) int {
+	keys := slices.SortedFunc(maps.Keys(pathsMap), func(s1, s2 string) int {
 		for p, cmpFunc := range reversePrecedence {
 			cmp1, cmp2 := cmpFunc(s1, p), cmpFunc(s2, p)
 			if cmp1 && !cmp2 {
