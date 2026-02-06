@@ -3,8 +3,8 @@ module github.com/nobl9/nobl9-openslo
 go 1.25.7
 
 require (
-	github.com/OpenSLO/go-sdk v0.8.0
-	github.com/goccy/go-yaml v1.18.0
+	github.com/OpenSLO/go-sdk v0.9.0
+	github.com/goccy/go-yaml v1.19.2
 	github.com/nobl9/govy v0.23.0-rc2
 	github.com/nobl9/nobl9-go v0.122.2
 	github.com/pkg/errors v0.9.1
