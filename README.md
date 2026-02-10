@@ -83,13 +83,13 @@ The following OpenSLO objects map to Nobl9 schema:
 <!-- markdownlint-disable MD013 -->
 | OpenSLO object             | Nobl9 object        | Supported | Extra rules                                                                                |
 |----------------------------|---------------------|:---------:|--------------------------------------------------------------------------------------------|
-| v1.Service                 | v1alpha.Service     |     ✅     |                                                                                            |
-| v1.SLO                     | v1alpha.SLO         |     ✅     |                                                                                            |
-| v1.SLI                     | -                   |    ✖️     | Inlined when referenced by SLO.                                                            |
-| v1.DataSource              | v1alpha.Agent       |     ✅     | By default, an Agent connection is created. Use annotations to create a Direct connection. |
-| v1.AlertPolicy             | v1alpha.AlertPolicy |     ✅     |                                                                                            |
-| v1.AlertCondition          | -                   |    ✖️     | Inlined when referenced by AlertPolicy.                                                    |
-| v1.AlertNotificationTarget | v1.AlertMethod      |     ✅     |                                                                                            |
+| v1.Service                 | v1alpha.Service     |     ✅    |                                                                                            |
+| v1.SLO                     | v1alpha.SLO         |     ✅    |                                                                                            |
+| v1.SLI                     | -                   |     ✖️    | Inlined when referenced by SLO.                                                            |
+| v1.DataSource              | v1alpha.Agent       |     ✅    | By default, an Agent connection is created. Use annotations to create a Direct connection. |
+| v1.AlertPolicy             | v1alpha.AlertPolicy |     ✅    |                                                                                            |
+| v1.AlertCondition          | -                   |     ✖️    | Inlined when referenced by AlertPolicy.                                                    |
+| v1.AlertNotificationTarget | v1.AlertMethod      |     ✅    |                                                                                            |
 <!-- markdownlint-enable MD013 -->
 
 Generic fields in the OpenSLO schema also have additional rules applied.
