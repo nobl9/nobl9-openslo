@@ -6,7 +6,7 @@ require (
 	github.com/OpenSLO/go-sdk v0.9.1
 	github.com/goccy/go-yaml v1.19.2
 	github.com/nobl9/govy v0.23.0
-	github.com/nobl9/nobl9-go v0.122.2
+	github.com/nobl9/nobl9-go v0.123.0
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.11.1
 	github.com/tidwall/gjson v1.18.0
@@ -18,7 +18,7 @@ require (
 	github.com/aws/aws-sdk-go v1.55.8 // indirect
 	github.com/bmatcuk/doublestar/v4 v4.10.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/golang-jwt/jwt/v5 v5.3.0 // indirect
+	github.com/golang-jwt/jwt/v5 v5.3.1 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-retryablehttp v0.7.8 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
