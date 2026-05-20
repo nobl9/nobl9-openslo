@@ -1,9 +1,10 @@
 package openslotonobl9
 
 import (
+	"fmt"
+
 	"github.com/OpenSLO/go-sdk/pkg/openslo"
 	"github.com/OpenSLO/go-sdk/pkg/openslosdk"
-	"github.com/pkg/errors"
 )
 
 var (
@@ -35,7 +36,7 @@ func resolveObjectReferences(objects []openslo.Object) ([]openslo.Object, error)
 		WithConfig(opensloInlineReferenceConfig).
 		Inline()
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to inline OpenSLO referenced objects")
+		return nil, fmt.Errorf("failed to inline OpenSLO referenced objects: %w", err)
 	}
 
 	objects = openslosdk.NewReferenceExporter(objects...).

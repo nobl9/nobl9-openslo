@@ -2,6 +2,7 @@ package openslotonobl9
 
 import (
 	"encoding/json"
+	"fmt"
 	"maps"
 	"strings"
 
@@ -10,7 +11,6 @@ import (
 	"github.com/nobl9/nobl9-go/manifest"
 	"github.com/nobl9/nobl9-go/manifest/v1alpha/alertpolicy"
 	"github.com/nobl9/nobl9-go/manifest/v1alpha/twindow"
-	"github.com/pkg/errors"
 	"github.com/tidwall/sjson"
 
 	"github.com/nobl9/nobl9-openslo/internal/conversionrules"
@@ -36,10 +36,10 @@ func getConversionRules(version openslo.Version, kind openslo.Kind) (conversionr
 		case openslo.KindAlertCondition:
 			return nil, nil
 		default:
-			return nil, errors.Errorf("unsupported kind %s for version %s", kind, version)
+			return nil, fmt.Errorf("unsupported kind %s for version %s", kind, version)
 		}
 	default:
-		return nil, errors.Errorf("unsupported API version %s", version)
+		return nil, fmt.Errorf("unsupported API version %s", version)
 	}
 }
 
@@ -108,7 +108,7 @@ const nobl9AnnotationPrefix = "nobl9.com/"
 func convertAnnotations(jsonObject, path string, v any) (updatedJSON string, err error) {
 	m, ok := v.(map[string]any)
 	if !ok {
-		return "", errors.Errorf("invalid type for %s, expected map[string]any, got %T", path, v)
+		return "", fmt.Errorf("invalid type for %s, expected map[string]any, got %T", path, v)
 	}
 	for key, av := range m {
 		var newPath string
@@ -131,11 +131,11 @@ func convertAnnotations(jsonObject, path string, v any) (updatedJSON string, err
 func convertSLOTimeWindowDuration(jsonObject, path string, v any) (updatedJSON string, err error) {
 	duration, ok := v.(string)
 	if !ok {
-		return "", errors.Errorf("invalid type for %s, expected string, got %T", path, v)
+		return "", fmt.Errorf("invalid type for %s, expected string, got %T", path, v)
 	}
 	parsedDuration, err := v1.ParseDurationShorthand(duration)
 	if err != nil {
-		return "", errors.Wrapf(err, "failed to parse %s as %T", duration, parsedDuration)
+		return "", fmt.Errorf("failed to parse %s as %T: %w", duration, parsedDuration, err)
 	}
 	unit, value := durationShorthandUnitToTimeWindowUnit(parsedDuration)
 	jsonObject, err = sjson.Set(jsonObject, "spec.timeWindows.0.unit", unit)
@@ -192,7 +192,7 @@ func convertSLOMetricSource(typ sliMetricType) conversionrules.ConversionFunc {
 		case sliMetricTypeBad:
 			newPath = "spec.objectives.#.countMetrics.bad"
 		default:
-			return "", errors.Errorf("unsupported metric source type %d", typ)
+			return "", fmt.Errorf("unsupported metric source type %d", typ)
 		}
 		newPath += "." + metricSource.Type
 		jsonObject, err = jsonpath.Set(jsonObject, newPath, metricSource.Spec)
@@ -218,10 +218,10 @@ func convertDataSourceSpec(jsonObject, _ string, v any) (updatedJSON string, err
 func convertConditionKind(jsonObject, path string, v any) (updatedJSON string, err error) {
 	kind, ok := v.(string)
 	if !ok {
-		return "", errors.Errorf("invalid type for %s, expected string, got %T", path, v)
+		return "", fmt.Errorf("invalid type for %s, expected string, got %T", path, v)
 	}
 	if kind != "burnrate" {
-		return "", errors.Errorf("unsupported condition kind '%s', only 'burnrate' is supported", kind)
+		return "", fmt.Errorf("unsupported condition kind '%s', only 'burnrate' is supported", kind)
 	}
 	newPath := strings.TrimSuffix(path, "spec.condition.kind") + "measurement"
 	return sjson.Set(jsonObject, newPath, alertpolicy.MeasurementAverageBurnRate.String())
@@ -230,7 +230,7 @@ func convertConditionKind(jsonObject, path string, v any) (updatedJSON string, e
 func convertNotificationTarget(jsonObject, path string, v any) (updatedJSON string, err error) {
 	target, ok := v.(string)
 	if !ok {
-		return "", errors.Errorf("invalid type for %s, expected string, got %T", path, v)
+		return "", fmt.Errorf("invalid type for %s, expected string, got %T", path, v)
 	}
 	alertMethod := getAlertMethodTypes()[target]
 	return sjson.Set(jsonObject, "spec."+target, alertMethod)
@@ -249,10 +249,10 @@ func mergeConversionRules(rules ...conversionrules.Rules) conversionrules.Rules 
 func anyToType[T any](v any) (result T, err error) {
 	rawJSON, err := json.Marshal(v)
 	if err != nil {
-		return result, errors.Wrapf(err, "failed to convert %T to %T", v, result)
+		return result, fmt.Errorf("failed to convert %T to %T: %w", v, result, err)
 	}
 	if err = json.Unmarshal(rawJSON, &result); err != nil {
-		return result, errors.Wrapf(err, "failed to convert %T to %T", v, result)
+		return result, fmt.Errorf("failed to convert %T to %T: %w", v, result, err)
 	}
 	return result, nil
 }

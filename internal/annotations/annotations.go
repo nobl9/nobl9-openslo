@@ -2,10 +2,10 @@ package annotations
 
 import (
 	"encoding/json"
+	"fmt"
 	"reflect"
 	"strings"
 
-	"github.com/pkg/errors"
 	"github.com/tidwall/sjson"
 )
 
@@ -33,7 +33,7 @@ func AddOpenSLOToNobl9(jsonObject, path string, value any) (string, error) {
 	case reflect.Slice, reflect.Map, reflect.Struct, reflect.Array:
 		data, err = json.Marshal(value)
 		if err != nil {
-			return "", errors.Wrapf(err, "failed to marshal value for path %s", path)
+			return "", fmt.Errorf("failed to marshal value for path %s: %w", path, err)
 		}
 	default:
 		data = value
