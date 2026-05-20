@@ -16,7 +16,6 @@ import (
 	"github.com/nobl9/nobl9-go/manifest/v1alpha/alertmethod"
 	"github.com/nobl9/nobl9-go/manifest/v1alpha/direct"
 	"github.com/nobl9/nobl9-go/manifest/v1alpha/slo"
-	"github.com/pkg/errors"
 )
 
 var opensloObjectValidation = govy.New(
@@ -203,7 +202,7 @@ func getDataSourceTypeNames(kind manifest.Kind) []string {
 func objectTransformer[T openslo.Object](o openslo.Object) (T, error) {
 	v, ok := o.(T)
 	if !ok {
-		return v, errors.Errorf("failed to cast OpenSLO object to %T", v)
+		return v, fmt.Errorf("failed to cast OpenSLO object to %T", v)
 	}
 	return v, nil
 }

@@ -76,7 +76,7 @@ func TestConvert_Validate(t *testing.T) {
 			)},
 			errors: []govytest.ExpectedRuleError{
 				{
-					PropertyName: "apiVersion",
+					PropertyPath: "apiVersion",
 					Code:         rules.ErrorCodeOneOf,
 				},
 			},
@@ -90,7 +90,7 @@ func TestConvert_Validate(t *testing.T) {
 			)},
 			errors: []govytest.ExpectedRuleError{
 				{
-					PropertyName: "spec.target",
+					PropertyPath: "['spec.target']",
 					Code:         rules.ErrorCodeOneOf,
 					Message:      "must be one of: discord, email, jira, msteams, opsgenie, pagerduty, servicenow, slack, webhook",
 				},
@@ -121,7 +121,7 @@ func TestConvert_Validate(t *testing.T) {
 			)},
 			errors: []govytest.ExpectedRuleError{
 				{
-					PropertyName:    "spec.type",
+					PropertyPath:    "['spec.type']",
 					Code:            rules.ErrorCodeOneOf,
 					ContainsMessage: "must be one of: prometheus, datadog",
 				},
@@ -140,7 +140,7 @@ func TestConvert_Validate(t *testing.T) {
 			)},
 			errors: []govytest.ExpectedRuleError{
 				{
-					PropertyName:    "spec.type",
+					PropertyPath:    "['spec.type']",
 					Code:            rules.ErrorCodeOneOf,
 					ContainsMessage: "must be one of: prometheus, datadog",
 				},
@@ -159,7 +159,7 @@ func TestConvert_Validate(t *testing.T) {
 			)},
 			errors: []govytest.ExpectedRuleError{
 				{
-					PropertyName:    "spec.type",
+					PropertyPath:    "['spec.type']",
 					Code:            rules.ErrorCodeOneOf,
 					ContainsMessage: "must be one of: datadog, newRelic",
 				},
@@ -196,7 +196,7 @@ func TestConvert_Validate(t *testing.T) {
 			)},
 			errors: []govytest.ExpectedRuleError{
 				{
-					PropertyName: "metadata.annotations.['nobl9.com/kind']",
+					PropertyPath: "metadata.annotations['nobl9.com/kind']",
 					IsKeyError:   true,
 					Code:         rules.ErrorCodeNotOneOf,
 				},
@@ -212,7 +212,7 @@ func TestConvert_Validate(t *testing.T) {
 			)},
 			errors: []govytest.ExpectedRuleError{
 				{
-					PropertyName: "metadata.annotations.['nobl9.com/apiVersion']",
+					PropertyPath: "metadata.annotations['nobl9.com/apiVersion']",
 					IsKeyError:   true,
 					Code:         rules.ErrorCodeNotOneOf,
 				},
@@ -272,21 +272,21 @@ func TestConvert_Validate(t *testing.T) {
 			)},
 			errors: []govytest.ExpectedRuleError{
 				{
-					PropertyName:    "spec.indicator.spec.ratioMetric.total.metricSource.type",
+					PropertyPath:    "['spec.indicator'].spec.ratioMetric.total.metricSource.type",
 					Code:            rules.ErrorCodeOneOf,
 					ContainsMessage: "must be one of: prometheus, datadog",
 				},
 				{
-					PropertyName:    "spec.indicator.spec.ratioMetric.good.metricSource.type",
+					PropertyPath:    "['spec.indicator'].spec.ratioMetric.good.metricSource.type",
 					Code:            rules.ErrorCodeOneOf,
 					ContainsMessage: "must be one of: prometheus, datadog",
 				},
 				{
-					PropertyName: "spec.indicator.spec.ratioMetric.total.metricSource.metricSourceRef",
+					PropertyPath: "['spec.indicator'].spec.ratioMetric.total.metricSource.metricSourceRef",
 					Code:         rules.ErrorCodeRequired,
 				},
 				{
-					PropertyName: "spec.indicator.spec.ratioMetric.good.metricSource.metricSourceRef",
+					PropertyPath: "['spec.indicator'].spec.ratioMetric.good.metricSource.metricSourceRef",
 					Code:         rules.ErrorCodeRequired,
 				},
 			},

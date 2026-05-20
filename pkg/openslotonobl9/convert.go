@@ -3,6 +3,7 @@ package openslotonobl9
 import (
 	"bytes"
 	"cmp"
+	"errors"
 	"fmt"
 	"maps"
 	"os"
@@ -14,7 +15,6 @@ import (
 	"github.com/nobl9/govy/pkg/govy"
 	"github.com/nobl9/nobl9-go/manifest"
 	"github.com/nobl9/nobl9-go/sdk"
-	"github.com/pkg/errors"
 	"github.com/tidwall/gjson"
 
 	"github.com/nobl9/nobl9-openslo/internal/annotations"
@@ -32,10 +32,10 @@ func Convert(objects []openslo.Object) ([]manifest.Object, error) {
 	}
 	objects, err := resolveObjectReferences(objects)
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to resolve OpenSLO object references")
+		return nil, fmt.Errorf("failed to resolve OpenSLO object references: %w", err)
 	}
 	if err = openslosdk.Validate(objects...); err != nil {
-		return nil, errors.Wrapf(err, "failed to validate OpenSLO objects")
+		return nil, fmt.Errorf("failed to validate OpenSLO objects: %w", err)
 	}
 
 	nobl9JSONObjects := make([]string, 0, len(objects))
@@ -60,7 +60,7 @@ func opensloObjectToNobl9(opensloObject openslo.Object) (nobl9Object string, err
 
 	var buf bytes.Buffer
 	if err = openslosdk.Encode(&buf, openslosdk.FormatJSON, opensloObject); err != nil {
-		return "", errors.Wrap(err, "failed to encode OpenSLO objects to JSON")
+		return "", fmt.Errorf("failed to encode OpenSLO objects to JSON: %w", err)
 	}
 	object := gjson.Parse(buf.String()).Array()[0]
 
