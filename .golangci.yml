@@ -17,6 +17,7 @@ linters:
     - gocyclo
     - goheader
     - goprintffuncname
+    - gosec
     - govet
     - importas
     - ineffassign
@@ -47,8 +48,6 @@ linters:
         - singleCaseSwitch
       enabled-tags:
         - opinionated
-    govet:
-      check-shadowing: false
     lll:
       line-length: 120
     misspell:
@@ -59,7 +58,12 @@ linters:
           disabled: true
   exclusions:
     generated: strict
+    paths:
+      - node_modules
     rules:
+      - path: _test\.go
+        linters:
+          - gosec
       - linters:
           - revive
         text: exported (function|method|type|const|var) .*? should have comment
