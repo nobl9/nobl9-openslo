@@ -48,8 +48,6 @@ linters:
         - singleCaseSwitch
       enabled-tags:
         - opinionated
-    govet:
-      check-shadowing: false
     lll:
       line-length: 120
     misspell:

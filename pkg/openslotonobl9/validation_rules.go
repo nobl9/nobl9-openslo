@@ -167,7 +167,7 @@ func getAlertMethodTypes() map[string]any {
 		}
 		fieldName := split[0]
 		typ := field.Type
-		if typ.Kind() == reflect.Ptr {
+		if typ.Kind() == reflect.Pointer {
 			typ = typ.Elem()
 		}
 		types[fieldName] = reflect.Zero(typ).Interface()

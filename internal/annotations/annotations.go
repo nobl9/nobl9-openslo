@@ -22,7 +22,7 @@ import (
 // Complex objects are marshaled to JSON before being added to the object.
 func AddOpenSLOToNobl9(jsonObject, path string, value any) (string, error) {
 	rt := reflect.TypeOf(value)
-	if rt.Kind() == reflect.Ptr {
+	if rt.Kind() == reflect.Pointer {
 		rt = rt.Elem()
 	}
 	var (
