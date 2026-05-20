@@ -10,6 +10,7 @@ import (
 	"github.com/OpenSLO/go-sdk/pkg/openslo"
 	v1 "github.com/OpenSLO/go-sdk/pkg/openslo/v1"
 	"github.com/nobl9/govy/pkg/govy"
+	"github.com/nobl9/govy/pkg/jsonpath"
 	"github.com/nobl9/govy/pkg/rules"
 	"github.com/nobl9/nobl9-go/manifest"
 	"github.com/nobl9/nobl9-go/manifest/v1alpha/agent"
@@ -46,7 +47,7 @@ var opensloV1Validation = govy.New(
 		When(whenObjectIsKind(openslo.KindAlertNotificationTarget)).
 		Include(govy.New(
 			govy.For(func(a v1.AlertNotificationTarget) string { return a.Spec.Target }).
-				WithName("spec.target").
+				WithPath(jsonpath.Parse("spec.target")).
 				Rules(rules.OneOf(slices.Sorted(maps.Keys(getAlertMethodTypes()))...)),
 		)),
 	govy.Transform(govy.GetSelf[openslo.Object](), objectTransformer[v1.AlertPolicy]).
@@ -72,7 +73,7 @@ var opensloV1AnnotationsValidation = govy.New(
 
 var opensloV1SLOValidation = govy.New(
 	govy.ForPointer(func(s v1.SLO) *v1.SLOIndicatorInline { return s.Spec.Indicator }).
-		WithName("spec.indicator").
+		WithPath(jsonpath.Parse("spec.indicator")).
 		Include(govy.New(
 			govy.For(func(s v1.SLOIndicatorInline) v1.SLISpec { return s.Spec }).
 				WithName("spec").
@@ -115,7 +116,7 @@ var opensloV1SLIMetricSpecValidation = govy.New(
 
 var opensloV1DataSourceValidation = govy.New(
 	govy.ForMap(func(d v1.DataSource) v1.Annotations { return d.Metadata.Annotations }).
-		WithName("spec.annotations").
+		WithPath(jsonpath.Parse("spec.annotations")).
 		RulesForKeys(rules.NEQ(DomainNobl9+"/apiVersion")).
 		IncludeForItems(govy.New(
 			govy.For(func(m govy.MapItem[string, string]) string { return m.Value }).
@@ -126,13 +127,13 @@ var opensloV1DataSourceValidation = govy.New(
 		When(func(d v1.DataSource) bool {
 			return hasAnnotation(d.Metadata.Annotations, DomainNobl9+"/kind", manifest.KindDirect.String())
 		}).
-		WithName("spec.type").
+		WithPath(jsonpath.Parse("spec.type")).
 		Rules(rules.OneOf(getDataSourceTypeNames(manifest.KindDirect)...)),
 	govy.For(func(d v1.DataSource) string { return d.Spec.Type }).
 		When(func(d v1.DataSource) bool {
 			return !hasAnnotation(d.Metadata.Annotations, DomainNobl9+"/kind", manifest.KindDirect.String())
 		}).
-		WithName("spec.type").
+		WithPath(jsonpath.Parse("spec.type")).
 		Rules(rules.OneOf(getDataSourceTypeNames(manifest.KindAgent)...)),
 )
 
