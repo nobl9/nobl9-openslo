@@ -76,7 +76,7 @@ func TestConvert_Validate(t *testing.T) {
 			)},
 			errors: []govytest.ExpectedRuleError{
 				{
-					PropertyName: "apiVersion",
+					PropertyPath: "apiVersion",
 					Code:         rules.ErrorCodeOneOf,
 				},
 			},
