@@ -1,6 +1,6 @@
 module github.com/nobl9/nobl9-openslo
 
-go 1.25.10
+go 1.26.4
 
 require (
 	github.com/OpenSLO/go-sdk v0.9.2
