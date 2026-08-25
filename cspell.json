@@ -38,7 +38,6 @@
     "goimports",
     "golangci",
     "gosec",
-    "govulncheck",
     "govy",
     "govytest",
     "inlines",
@@ -52,8 +51,6 @@
     "sloctl",
     "slos",
     "tpng",
-    "vuln",
-    "vulns",
     "wrapf"
   ]
 }
