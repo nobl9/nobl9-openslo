@@ -46,8 +46,8 @@ github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f h1:KUppIJq7/+
 github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f/go.mod h1:qRWi+5nqEBWmkhHvq77mSJWrCKwh8bxhgT7d/eI7P4U=
 github.com/nobl9/govy v0.29.0 h1:djB8Tx6mYDYNhfrmuKsdMNuSQTCkZcLB3S87ygtZZhA=
 github.com/nobl9/govy v0.29.0/go.mod h1:OdNFJceDL4MqQoQf9Z55yhHDTPs/4tDxmCw/Q7qzay8=
-github.com/nobl9/nobl9-go v0.134.1 h1:jbSYCaranWyLANqcKE4Umr7IksgFZ4ifwwsBcoZlXow=
-github.com/nobl9/nobl9-go v0.134.1/go.mod h1:R7tdHY7Audcsc84XEYK3jmmevOoUFlo44AgDtv7D54c=
+github.com/nobl9/nobl9-go v0.135.0 h1:dlPR+XAt3/kFd0tsFEl0WY30VgbNQOTV0oPJcv/W7+4=
+github.com/nobl9/nobl9-go v0.135.0/go.mod h1:N9UxRbNPOShi3qnylVNjY39C2ZeGQRbBcdQnhaLKMow=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
