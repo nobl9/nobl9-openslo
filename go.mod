@@ -6,7 +6,7 @@ require (
 	github.com/OpenSLO/go-sdk v0.9.2
 	github.com/goccy/go-yaml v1.19.2
 	github.com/nobl9/govy v0.30.0
-	github.com/nobl9/nobl9-go v0.135.0
+	github.com/nobl9/nobl9-go v0.137.0
 	github.com/stretchr/testify v1.12.1
 	github.com/tidwall/gjson v1.19.0
 	github.com/tidwall/sjson v1.2.5
