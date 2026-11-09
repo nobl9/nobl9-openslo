@@ -8,8 +8,8 @@ require (
 	github.com/nobl9/govy v0.30.0
 	github.com/nobl9/nobl9-go v0.139.1
 	github.com/stretchr/testify v1.12.1
-	github.com/tidwall/gjson v1.20.1
-	github.com/tidwall/sjson v1.2.7
+	github.com/tidwall/gjson v1.20.2
+	github.com/tidwall/sjson v1.2.8
 )
 
 require (
@@ -27,7 +27,7 @@ require (
 	github.com/prometheus/common v0.70.1 // indirect
 	github.com/teambition/rrule-go v1.8.2 // indirect
 	github.com/tidwall/match v1.2.0 // indirect
-	github.com/tidwall/pretty v1.2.1 // indirect
+	github.com/tidwall/pretty v1.3.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.4 // indirect
 	go.yaml.in/yaml/v3 v3.0.5 // indirect
 	golang.org/x/mod v0.39.0 // indirect
