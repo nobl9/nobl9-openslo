@@ -8,8 +8,8 @@ require (
 	github.com/nobl9/govy v0.30.0
 	github.com/nobl9/nobl9-go v0.139.1
 	github.com/stretchr/testify v1.12.1
-	github.com/tidwall/gjson v1.20.2
-	github.com/tidwall/sjson v1.2.9
+	github.com/tidwall/gjson v1.20.4
+	github.com/tidwall/sjson v1.2.10
 )
 
 require (
